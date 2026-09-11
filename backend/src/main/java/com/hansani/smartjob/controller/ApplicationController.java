@@ -8,7 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hansani.smartjob.dto.ApplicationResponseDto;
@@ -110,4 +112,29 @@ public class ApplicationController {
                 application.getAppliedAt()
         );
     }
+
+    @PutMapping("/{applicationId}/status")
+public ResponseEntity<?> updateApplicationStatus(
+        Authentication authentication,
+        @PathVariable Long applicationId,
+        @RequestParam String status) {
+
+    String email = authentication.getName();
+
+    try {
+        Application application =
+                applicationService.updateApplicationStatus(
+                        email,
+                        applicationId,
+                        status
+                );
+
+        return ResponseEntity.ok(toDto(application));
+
+    } catch (RuntimeException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(e.getMessage());
+    }
+}
 }

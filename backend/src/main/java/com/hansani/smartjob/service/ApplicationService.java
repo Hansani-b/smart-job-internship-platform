@@ -69,4 +69,35 @@ public class ApplicationService {
 
         return applicationRepository.findByJobId(jobId);
     }
+
+    public Application updateApplicationStatus(
+        String email,
+        Long applicationId,
+        String status) {
+
+    Application application = applicationRepository
+            .findById(applicationId)
+            .orElseThrow(() ->
+                    new RuntimeException("Application not found"));
+
+    Job job = application.getJob();
+
+    if (!job.getCompany().getUser().getEmail().equals(email)) {
+        throw new RuntimeException(
+                "You are not allowed to update this application");
+    }
+
+    if (!status.equals("PENDING")
+        && !status.equals("SHORTLISTED")
+        && !status.equals("INTERVIEW_SCHEDULED")
+        && !status.equals("SELECTED")
+        && !status.equals("REJECTED")) {
+
+    throw new RuntimeException("Invalid application status");
+}
+
+application.setStatus(status);
+
+return applicationRepository.save(application);
+}
 }
