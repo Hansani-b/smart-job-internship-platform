@@ -15,13 +15,16 @@ public class InterviewService {
 
     private final InterviewRepository interviewRepository;
     private final ApplicationRepository applicationRepository;
+    private final NotificationService notificationService;
 
     public InterviewService(
             InterviewRepository interviewRepository,
-            ApplicationRepository applicationRepository) {
+            ApplicationRepository applicationRepository,
+            NotificationService notificationService) {
 
         this.interviewRepository = interviewRepository;
         this.applicationRepository = applicationRepository;
+        this.notificationService = notificationService;
     }
 
     public Interview scheduleInterview(
@@ -67,7 +70,27 @@ public class InterviewService {
 
         applicationRepository.save(application);
 
-        return interviewRepository.save(interview);
+        Interview savedInterview =
+                interviewRepository.save(interview);
+
+        // Create notification for the student
+        Long studentUserId =
+                application.getStudent()
+                        .getUser()
+                        .getId();
+
+        String message =
+                "Interview scheduled for "
+                        + application.getJob().getTitle()
+                        + " on "
+                        + interviewDate;
+
+        notificationService.createNotification(
+                studentUserId,
+                message
+        );
+
+        return savedInterview;
     }
 
     public Optional<Interview> getInterviewByApplicationId(
