@@ -1,3 +1,4 @@
+
 package com.hansani.smartjob.controller;
 
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,15 @@ public class UserController {
                     .body("Email already exists");
         }
 
+        // Always assign STUDENT role for public registration
+        user.setRole("STUDENT");
+
+        // New accounts are active by default
+        user.setActive(true);
+
         User savedUser = userService.saveUser(user);
+
+        savedUser.setPassword(null);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

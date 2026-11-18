@@ -1,3 +1,4 @@
+
 package com.hansani.smartjob.entity;
 
 import jakarta.persistence.Column;
@@ -24,6 +25,9 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     public User() {
     }
 
@@ -31,6 +35,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.active = true;
     }
 
     public Long getId() {
@@ -59,5 +64,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
